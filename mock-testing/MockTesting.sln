@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MockTesting", "MockTesting\MockTesting.csproj", "{05B72C77-081C-4812-A063-05E7892A93DB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MockTesting.Tests", "MockTesting.Tests\MockTesting.Tests.csproj", "{2BB1C291-E81C-4DDF-8C1F-C0C48541A084}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{05B72C77-081C-4812-A063-05E7892A93DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05B72C77-081C-4812-A063-05E7892A93DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05B72C77-081C-4812-A063-05E7892A93DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05B72C77-081C-4812-A063-05E7892A93DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2BB1C291-E81C-4DDF-8C1F-C0C48541A084}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2BB1C291-E81C-4DDF-8C1F-C0C48541A084}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2BB1C291-E81C-4DDF-8C1F-C0C48541A084}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2BB1C291-E81C-4DDF-8C1F-C0C48541A084}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
