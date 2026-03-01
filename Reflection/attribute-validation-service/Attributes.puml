@@ -1,0 +1,62 @@
+@startuml
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam rectangle {
+  BackgroundColor #FFD966
+  BorderColor #D6AD33
+  FontColor #1F1F1F
+  RoundCorner 20
+}
+skinparam componentStyle rectangle
+skinparam note {
+  BackgroundColor #FFF2CC
+  BorderColor #D6AD33
+  FontColor #1F1F1F
+}
+
+rectangle "obj." as Input #FFE699
+
+rectangle "Validation Service" as Service #F9CB9C
+
+note top of Service
+  1. Required Property Validation
+  2. Range Validation
+  3. String Length Validation
+  +
+  Unit tests & Documentation
+end note
+
+rectangle "Required Validator" as Required #FFE699
+rectangle "Range Validator" as Range #FFE699
+rectangle "String Length Validator" as StringLength #FFE699
+rectangle "..." as Others #FFE699
+
+Required --> Service
+Range --> Service
+StringLength --> Service
+Others --> Service
+Input --> Service
+
+rectangle "Ok" as Ok #FFE699
+rectangle "Not ok" as NotOk #FFE699
+
+rectangle "Message" as Message #FFE699
+rectangle "..." as Extra1 #FFE699
+rectangle "..." as Extra2 #FFE699
+
+Service --> Ok
+Service --> NotOk
+NotOk --> Message
+NotOk --> Extra1
+NotOk --> Extra2
+
+note right of Ok
+  Valid object
+end note
+
+note right of Message
+  Validation details
+end note
+
+@enduml
+
