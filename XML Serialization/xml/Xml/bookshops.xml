@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<co:bookshops xmlns:co="http://www.contoso.com/bookshops">
+  <co:bookshop id="1">
+    <co:name>Amazon</co:name>
+    <co:website>https://amazon.com</co:website>
+    <co:books>
+      <co:book id="1">
+        <co:authors>
+          <co:author>Alexandre Dumas</co:author>
+        </co:authors>
+        <co:title>The Three Musketeers</co:title>
+        <co:genres>
+          <co:genre>Historical novel</co:genre>
+          <co:genre>Adventure novel</co:genre>
+          <co:genre>Swashbuckler</co:genre>
+        </co:genres>
+        <co:categories>
+          <co:category>Action</co:category>
+          <co:category>Adventure</co:category>
+        </co:categories>
+        <co:price currency="USD">11.13</co:price>
+        <co:language>English</co:language>
+      </co:book>
+      <co:book id="2">
+        <co:authors>
+          <co:author>Terry Pratchett</co:author>
+          <co:author>Neil Gaiman</co:author>
+        </co:authors>
+        <co:title>The Illustrated Good Omens</co:title>
+        <co:genres>
+          <co:genre>Fantasy novel</co:genre>
+          <co:genre>Comedy novel</co:genre>
+        </co:genres>
+        <co:categories>
+          <co:category>Fantasy</co:category>
+          <co:category>Science and Religion</co:category>
+        </co:categories>
+        <co:price currency="USD">39.39</co:price>
+        <co:language>English</co:language>
+      </co:book>
+    </co:books>
+  </co:bookshop>
+  <co:bookshop id="2">
+    <co:name>1000 livres et vous</co:name>
+    <co:website>https://1000livresetvous.com/</co:website>
+    <co:books>
+      <co:book id="1">
+        <co:authors>
+          <co:author>Alexandre Dumas</co:author>
+        </co:authors>
+        <co:title>Les Trois Mousquetaires</co:title>
+        <co:genres>
+          <co:genre>Historical novel</co:genre>
+          <co:genre>Adventure novel</co:genre>
+          <co:genre>Swashbuckler</co:genre>
+        </co:genres>
+        <co:categories>
+          <co:category>Fiction</co:category>
+          <co:category>Littérature d'aventure</co:category>
+        </co:categories>
+        <co:price currency="EUR">16</co:price>
+        <co:language>French</co:language>
+      </co:book>
+      <co:book id="2">
+        <co:authors>
+          <co:author>Arthur Conan Doyle</co:author>
+        </co:authors>
+        <co:title>Une étude en rouge</co:title>
+        <co:genres>
+          <co:genre>Detective fiction</co:genre>
+          <co:genre>Short stories</co:genre>
+        </co:genres>
+        <co:categories>
+          <co:category>Fiction</co:category>
+          <co:category>Littérature d'aventure</co:category>
+          <co:category>Détective</co:category>
+        </co:categories>
+        <co:price currency="EUR">36</co:price>
+        <co:language>French</co:language>
+      </co:book>
+    </co:books>
+  </co:bookshop>
+  <co:bookshop id="3">
+    <co:name>Oz</co:name>
+    <co:website>https://oz.by</co:website>
+    <co:books>
+      <co:book id="2">
+        <co:authors>
+          <co:author>Александр Дюма</co:author>
+        </co:authors>
+        <co:title>Три мушкетера</co:title>
+        <co:genres>
+          <co:genre>Historical novel</co:genre>
+          <co:genre>Adventure novel</co:genre>
+          <co:genre>Swashbuckler</co:genre>
+        </co:genres>
+        <co:categories>
+          <co:category>Художественная литература</co:category>
+          <co:category>Классическая литература</co:category>
+          <co:category>Зарубежная литература</co:category>
+        </co:categories>
+        <co:price currency="BYN">34.68</co:price>
+        <co:language>Русский</co:language>
+      </co:book>
+      <co:book id="1">
+        <co:authors>
+          <co:author>Arthur Conan Doyle</co:author>
+        </co:authors>
+        <co:title>The Adventures of Sherlock Holmes</co:title>
+        <co:genres>
+          <co:genre>Detective fiction</co:genre>
+          <co:genre>Short stories</co:genre>
+        </co:genres>
+        <co:categories>
+          <co:category>Нехудожественная литература</co:category>
+          <co:category>Изучение иностранных языков</co:category>
+          <co:category>Адаптированные книги</co:category>
+        </co:categories>
+        <co:price currency="BYN">11.22</co:price>
+        <co:language>English</co:language>
+      </co:book>
+    </co:books>
+  </co:bookshop>
+</co:bookshops>
