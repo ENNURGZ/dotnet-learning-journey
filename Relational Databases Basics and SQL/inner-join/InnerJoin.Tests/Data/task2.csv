@@ -1,0 +1,50 @@
+id,title,category,price
+INTEGER,CHAR,CHAR,DOUBLE
+11,Cola,drinks,60.0
+12,Cola,drinks,5.5
+31,Cola,drinks,60.0
+32,Cola,drinks,5.5
+9,Juice,drinks,100.0
+10,Juice,drinks,120.0
+29,Juice,drinks,100.0
+30,Juice,drinks,120.0
+23,Vodka,drinks,15.0
+24,Vodka,drinks,20.0
+25,Vodka,drinks,16.2
+26,Vodka,drinks,12.0
+7,Water,drinks,13.0
+8,Water,drinks,50.0
+47,Water,drinks,33.33
+48,Water,drinks,44.44
+21,carp,fish,10.11
+22,carp,fish,5.05
+27,carp,fish,13.0
+28,carp,fish,50.0
+3,Banana,fruits,15.0
+4,Banana,fruits,20.0
+43,Banana,fruits,10.02
+44,Banana,fruits,89.0
+5,Orange,fruits,16.2
+6,Orange,fruits,12.0
+45,Orange,fruits,88.99
+46,Orange,fruits,32.0
+1,Red Apple,fruits,10.11
+2,Red Apple,fruits,5.05
+41,Red Apple,fruits,5.5
+42,Red Apple,fruits,12.23
+17,Cabbage,vegetables,32.0
+18,Cabbage,vegetables,33.33
+37,Cabbage,vegetables,32.0
+38,Cabbage,vegetables,33.33
+13,Carrot,vegetables,12.23
+14,Carrot,vegetables,10.02
+33,Carrot,vegetables,12.23
+34,Carrot,vegetables,10.02
+15,Potato,vegetables,89.0
+16,Potato,vegetables,88.99
+35,Potato,vegetables,89.0
+36,Potato,vegetables,88.99
+19,Tomato,vegetables,44.44
+20,Tomato,vegetables,55.55
+39,Tomato,vegetables,44.44
+40,Tomato,vegetables,55.55

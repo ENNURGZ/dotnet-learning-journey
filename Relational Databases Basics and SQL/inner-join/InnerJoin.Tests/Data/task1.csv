@@ -1,0 +1,50 @@
+id,title,price
+INTEGER,CHAR,DOUBLE
+3,Banana,15.0
+4,Banana,20.0
+43,Banana,10.02
+44,Banana,89.0
+17,Cabbage,32.0
+18,Cabbage,33.33
+37,Cabbage,32.0
+38,Cabbage,33.33
+13,Carrot,12.23
+14,Carrot,10.02
+33,Carrot,12.23
+34,Carrot,10.02
+11,Cola,60.0
+12,Cola,5.5
+31,Cola,60.0
+32,Cola,5.5
+9,Juice,100.0
+10,Juice,120.0
+29,Juice,100.0
+30,Juice,120.0
+5,Orange,16.2
+6,Orange,12.0
+45,Orange,88.99
+46,Orange,32.0
+15,Potato,89.0
+16,Potato,88.99
+35,Potato,89.0
+36,Potato,88.99
+1,Red Apple,10.11
+2,Red Apple,5.05
+41,Red Apple,5.5
+42,Red Apple,12.23
+19,Tomato,44.44
+20,Tomato,55.55
+39,Tomato,44.44
+40,Tomato,55.55
+23,Vodka,15.0
+24,Vodka,20.0
+25,Vodka,16.2
+26,Vodka,12.0
+7,Water,13.0
+8,Water,50.0
+47,Water,33.33
+48,Water,44.44
+21,carp,10.11
+22,carp,5.05
+27,carp,13.0
+28,carp,50.0

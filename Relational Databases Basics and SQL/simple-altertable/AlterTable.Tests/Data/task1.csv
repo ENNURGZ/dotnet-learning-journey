@@ -1,0 +1,8 @@
+id,name,short_name
+INTEGER,CHAR,CHAR
+1,First manufacturer,
+2,Second manufacturer,
+3,Third manufacturer,
+4,Fourth manufacturer,
+5,Useless1 manufacturer,
+6,Useless2 manufacturer,

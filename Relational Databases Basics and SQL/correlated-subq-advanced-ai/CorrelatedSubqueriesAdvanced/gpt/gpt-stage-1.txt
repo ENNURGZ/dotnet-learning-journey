@@ -1,0 +1,24 @@
+User: Create a SQL query for SQLite to get customers whose average purchase amount per order is more than 70. Sort by total purchase sum and surname (ascending). Result schema: name | surname | avg_purchase | sum_purchase. Use correlated subqueries.
+
+ChatGPT: Here is the SQL query using correlated subqueries:
+
+SELECT 
+    p.name, 
+    p.surname, 
+    (SELECT SUM(od.price_with_discount * od.product_amount) 
+     FROM customer_order co 
+     JOIN order_details od ON co.id = od.customer_order_id 
+     WHERE co.customer_id = c.person_id) / 
+    (SELECT COUNT(*) FROM customer_order WHERE customer_id = c.person_id) AS avg_purchase,
+    (SELECT SUM(od.price_with_discount * od.product_amount) 
+     FROM customer_order co 
+     JOIN order_details od ON co.id = od.customer_order_id 
+     WHERE co.customer_id = c.person_id) AS sum_purchase
+FROM person p
+JOIN customer c ON p.id = c.person_id
+WHERE ((SELECT SUM(od.price_with_discount * od.product_amount) 
+        FROM customer_order co 
+        JOIN order_details od ON co.id = od.customer_order_id 
+        WHERE co.customer_id = c.person_id) / 
+       (SELECT COUNT(*) FROM customer_order WHERE customer_id = c.person_id)) > 70
+ORDER BY sum_purchase ASC, p.surname ASC;

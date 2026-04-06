@@ -1,0 +1,3 @@
+surname,name,birth_date,sum
+CHAR,CHAR,DATE,REAL
+Ruda,Dasha,1987-10-01,5973.0

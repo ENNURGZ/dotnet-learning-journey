@@ -1,0 +1,20 @@
+User: Get a list of categories where each product has at least one purchase. Sort ascending by id. Result schema: id | name.
+ChatGPT: You can check if there are any products in a category that do not have any entries in the order_details table. If no such product exists, then all products in the category have at least one purchase.
+
+SQL:
+SELECT pc.id, pc.name
+FROM product_category pc
+WHERE EXISTS (
+    SELECT 1
+    FROM product p
+    JOIN product_title pt ON p.product_title_id = pt.id
+    WHERE pt.product_category_id = pc.id
+)
+AND NOT EXISTS (
+    SELECT 1
+    FROM product p
+    JOIN product_title pt ON p.product_title_id = pt.id
+    WHERE pt.product_category_id = pc.id
+    AND p.id NOT IN (SELECT product_id FROM order_details)
+)
+ORDER BY pc.id;

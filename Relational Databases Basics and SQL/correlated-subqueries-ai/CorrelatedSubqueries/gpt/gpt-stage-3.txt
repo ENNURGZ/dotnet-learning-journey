@@ -1,0 +1,14 @@
+User: Get a list of products whose price is higher than the average price of products in their category. Result schema: id | title | price.
+ChatGPT: This can be handled with a correlated subquery that calculates the average price of products in the same category as the outer product. Note that in this schema, the specific product title is stored in the 'comment' field of the 'product' table.
+
+SQL:
+SELECT p.id, p.comment AS title, p.price
+FROM product p
+JOIN product_title pt ON p.product_title_id = pt.id
+WHERE p.price > (
+    SELECT AVG(p2.price)
+    FROM product p2
+    JOIN product_title pt2 ON p2.product_title_id = pt2.id
+    WHERE pt2.product_category_id = pt.product_category_id
+)
+ORDER BY p.id;

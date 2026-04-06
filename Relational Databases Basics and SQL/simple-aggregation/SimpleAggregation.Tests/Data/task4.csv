@@ -1,0 +1,3 @@
+product_total,to_pay_total,discount_total
+INTEGER,REAL,REAL
+426,25882.23,1659.77

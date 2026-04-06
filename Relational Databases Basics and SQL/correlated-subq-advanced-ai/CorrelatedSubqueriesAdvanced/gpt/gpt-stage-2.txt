@@ -1,0 +1,36 @@
+User: Calculate how many more (in percentage) products were sold when their discount was more than 5%. Result schema: id | title | count_with_discount_5 | count_without_discount_5 | difference. Sort ascending by product id.
+
+ChatGPT: Here is the SQL query:
+
+SELECT 
+    p.id, 
+    p.comment AS title,
+    IFNULL((SELECT SUM(od.product_amount) 
+      FROM order_details od 
+      WHERE od.product_id = p.id 
+        AND (od.price - od.price_with_discount) / od.price > 0.05), 0) AS count_with_discount_5,
+    IFNULL((SELECT SUM(od.product_amount) 
+      FROM order_details od 
+      WHERE od.product_id = p.id 
+        AND (od.price - od.price_with_discount) / od.price <= 0.05), 0) AS count_without_discount_5,
+    ROUND(IFNULL(CAST((
+        IFNULL((SELECT SUM(od.product_amount) 
+          FROM order_details od 
+          WHERE od.product_id = p.id 
+            AND (od.price - od.price_with_discount) / od.price > 0.05), 0) - 
+        IFNULL((SELECT SUM(od.product_amount) 
+          FROM order_details od 
+          WHERE od.product_id = p.id 
+            AND (od.price - od.price_with_discount) / od.price <= 0.05), 0)
+    ) AS FLOAT) * 100.0 / NULLIF(CAST((
+        IFNULL((SELECT SUM(od.product_amount) 
+          FROM order_details od 
+          WHERE od.product_id = p.id 
+            AND (od.price - od.price_with_discount) / od.price > 0.05), 0) + 
+        IFNULL((SELECT SUM(od.product_amount) 
+          FROM order_details od 
+          WHERE od.product_id = p.id 
+            AND (od.price - od.price_with_discount) / od.price <= 0.05), 0)
+    ) AS FLOAT), 0), 0.0), 2) AS difference
+FROM product p
+ORDER BY p.id ASC;

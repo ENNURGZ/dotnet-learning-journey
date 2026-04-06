@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataInsert", "DataInsert\DataInsert.csproj", "{73BEF503-35DE-403D-9FD7-89D117C407F1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataInsert.Tests", "DataInsert.Tests\DataInsert.Tests.csproj", "{792FA0D2-9234-4E28-A8B3-358F7F39A7B9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{73BEF503-35DE-403D-9FD7-89D117C407F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73BEF503-35DE-403D-9FD7-89D117C407F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73BEF503-35DE-403D-9FD7-89D117C407F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73BEF503-35DE-403D-9FD7-89D117C407F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{792FA0D2-9234-4E28-A8B3-358F7F39A7B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{792FA0D2-9234-4E28-A8B3-358F7F39A7B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{792FA0D2-9234-4E28-A8B3-358F7F39A7B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{792FA0D2-9234-4E28-A8B3-358F7F39A7B9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {066DA4C8-CA2E-47F8-A2BA-EAD86FDFFC6B}
+	EndGlobalSection
+EndGlobal

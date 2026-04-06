@@ -1,0 +1,1 @@
+ALTER TABLE supermarket ADD COLUMN area DOUBLE;

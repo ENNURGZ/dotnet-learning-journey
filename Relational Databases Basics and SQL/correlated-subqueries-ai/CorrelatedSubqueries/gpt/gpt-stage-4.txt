@@ -1,0 +1,8 @@
+User: Provide a summary of how subqueries and correlated subqueries can be used for checking existence or conditions.
+ChatGPT: Subqueries can be used to compare a value against a set (using IN, > ANY, etc.) or to check for existence (EXISTS). Correlated subqueries are particularly powerful because they reference columns from the outer query, allowing per-row evaluations of complex conditions.
+
+Key points:
+- Subqueries can be independent or correlated.
+- Correlated subqueries reference the outer query.
+- Use EXISTS/NOT EXISTS for existence checks.
+- Use aggregation in subqueries for comparisons (e.g., > AVG).

@@ -1,0 +1,8 @@
+User: Get cities for which there are no streets, sorted ascending by name. Result schema: id | name.
+ChatGPT: To get cities that do not have any associated streets, you can use a SUBQUERY with NOT IN or a correlated subquery with NOT EXISTS.
+
+SQL:
+SELECT id, name
+FROM city
+WHERE id NOT IN (SELECT city_id FROM street)
+ORDER BY name;

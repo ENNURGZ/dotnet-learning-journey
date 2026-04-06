@@ -1,0 +1,17 @@
+id,name,street_id,house_number,area
+INTEGER,CHAR,INTEGER,CHAR,DOUBLE
+1,Best Choice,1,122,
+2,Best Choice,2,13B,
+3,Smart Choice,3,177A,
+4,Smart Choice,4,8/A,
+5,Your Choice,5,12,
+6,Cheep Choice,6,5A,
+7,kramnichka,7,10,
+8,FastMart,8,5A,
+9,Small market,9,89,
+10,Big mall,10,101,
+11,Nice mall,10,10A,
+12,Metro,2,12A,
+13,Swey mall,3,5A,
+14,Boo mall,4,23/A,
+15,goo mall,5,23-A,

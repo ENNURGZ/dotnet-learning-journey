@@ -1,0 +1,25 @@
+title,price
+CHAR,DOUBLE
+Banana,10.02
+Banana,15.0
+Banana,89.0
+Cabbage,32.0
+Cabbage,33.33
+Carrot,10.02
+Carrot,12.23
+Cola,5.5
+Juice,100.0
+Orange,12.0
+Potato,88.99
+Potato,89.0
+Red Apple,5.05
+Red Apple,5.5
+Red Apple,10.11
+Red Apple,12.23
+Tomato,44.44
+Tomato,55.55
+Vodka,12.0
+Vodka,16.2
+Vodka,20.0
+carp,13.0
+carp,50.0
