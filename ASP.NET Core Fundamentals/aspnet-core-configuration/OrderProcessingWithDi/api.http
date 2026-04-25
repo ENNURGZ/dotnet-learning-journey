@@ -1,0 +1,87 @@
+### Order Processing API - HTTP Client Requests
+### Base URL: http://localhost:5000
+### Start the application with: dotnet run --project OrderProcessingWithDi
+
+@baseUrl = http://localhost:5000
+
+### ============================================================================
+### DI Endpoints
+### ============================================================================
+
+### POST /orders - Create Order
+POST {{baseUrl}}/orders?productId=A1&quantity=6&unitPrice=10
+
+### GET /orders - Get All Orders
+GET {{baseUrl}}/orders
+
+### GET /di-demo - Demonstrate Service Lifetimes
+GET {{baseUrl}}/di-demo
+
+### GET /factory-demo - Demonstrate Factory Pattern
+GET {{baseUrl}}/factory-demo?price=10&quantity=6&serviceType=standard
+
+### GET /factory-demo - Simple Service
+GET {{baseUrl}}/factory-demo?price=10&quantity=6&serviceType=simple
+
+### ============================================================================
+### Routing Endpoints
+### ============================================================================
+
+### GET /api/v1/orders - Get All Orders (v1)
+GET {{baseUrl}}/api/v1/orders
+
+### GET /api/v1/orders/{orderId} - Get Order by ID
+GET {{baseUrl}}/api/v1/orders/0
+
+### GET /api/v1/orders/product/{productId} - Get Orders by Product ID
+GET {{baseUrl}}/api/v1/orders/product/A1
+
+### GET /api/v1/orders/range/{minTotal}/{maxTotal} - Get Orders by Total Range
+GET {{baseUrl}}/api/v1/orders/range/50/100
+
+### GET /api/v1/orders/search - Search Orders (all parameters optional)
+GET {{baseUrl}}/api/v1/orders/search?productId=A1&minTotal=50&maxTotal=100&limit=10
+
+### GET /api/v1/orders/search - Search Orders (minimal parameters)
+GET {{baseUrl}}/api/v1/orders/search
+
+### GET /api/v1/orders/recent/{days} - Get Recent Orders (range 1-30)
+GET {{baseUrl}}/api/v1/orders/recent/7
+
+### GET /api/v1/orders/stats - Get Order Statistics
+GET {{baseUrl}}/api/v1/orders/stats
+
+### ============================================================================
+### Configuration Endpoints
+### ============================================================================
+
+### GET /config/pricing - Get Pricing Configuration
+GET {{baseUrl}}/config/pricing
+
+### GET /config/order-processing - Get Order Processing Configuration
+GET {{baseUrl}}/config/order-processing
+
+### GET /config/application - Get Application Configuration
+GET {{baseUrl}}/config/application
+
+### GET /config/all - Get All Configuration
+GET {{baseUrl}}/config/all
+
+### GET /config/raw - Get Raw Configuration (using IConfiguration)
+GET {{baseUrl}}/config/raw
+
+### ============================================================================
+### Error Handling Examples
+### ============================================================================
+
+### GET /api/v1/orders/{orderId} - Order Not Found (404)
+GET {{baseUrl}}/api/v1/orders/99999
+
+### POST /orders - Invalid Order (400 Bad Request)
+POST {{baseUrl}}/orders?productId=&quantity=5&unitPrice=10
+
+### POST /orders - Zero Quantity (400 Bad Request)
+POST {{baseUrl}}/orders?productId=A1&quantity=0&unitPrice=10
+
+### POST /orders - Negative Price (400 Bad Request)
+POST {{baseUrl}}/orders?productId=A1&quantity=5&unitPrice=-10
