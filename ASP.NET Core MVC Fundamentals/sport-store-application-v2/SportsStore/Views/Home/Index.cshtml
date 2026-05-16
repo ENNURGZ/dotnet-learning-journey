@@ -1,0 +1,19 @@
+@model ProductsListViewModel
+
+<!-- NEW: Determine route name based on category selection -->
+@{
+    var route = this.Model.CurrentCategory is null ? "pagination" : "categoryPage";
+}
+
+@foreach (var p in Model?.Products ?? [])
+{
+    // NEW: Use partial view for product display
+    <partial name="_ProductSummary" model="p" />
+}
+
+<!-- NEW: Add pagination div with custom tag helper and category support -->
+<div page-model="@Model?.PagingInfo" page-classes-enabled="true" page-route="@route"
+     page-class="btn" page-class-normal="btn-outline-dark"
+     page-class-selected="btn-primary" page-url-category="@Model?.CurrentCategory!"
+     class="btn-group pull-right m-1">
+</div>
