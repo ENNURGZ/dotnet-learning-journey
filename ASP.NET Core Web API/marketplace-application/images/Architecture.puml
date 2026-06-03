@@ -1,0 +1,176 @@
+@startuml architecture
+!theme plain
+
+!define PRESENTATION_COLOR #E8F4FD
+!define BUSINESS_COLOR #F0E6FF
+!define DATA_COLOR #E0F0E0
+
+skinparam package {
+  BackgroundColor<<default>> White
+  BorderColor Black
+}
+
+package "WebApi" as WebApi #F5F7FA {
+  [Program.cs] <<entry point>>
+  package "WebApi.Controllers" #E8F4FD {
+    [CustomersController] -[hidden]down- [ProductsController]
+    [ProductsController] -[hidden]down- [ReceiptsController]
+    [ReceiptsController] -[hidden]down- [StatisticsController]
+  }
+}
+
+package "Business" as Business #F8F6FF {
+  package "Business.Interfaces" #F0E6FF {
+    [IProductService] <<interface>>
+    [ICustomerService] <<interface>>
+    [IReceiptService] <<interface>>
+    [IStatisticService] <<interface>>
+
+    [IProductService] -[hidden]down- [ICustomerService]
+    [ICustomerService] -[hidden]down- [IReceiptService]
+    [IReceiptService] -[hidden]down- [IStatisticService]
+  }
+
+  package "Business.Services" #E6D7FF {
+
+    [ProductService] -[hidden]down- [CustomerService]
+    [CustomerService] -[hidden]down- [ReceiptService]
+    [ReceiptService] -[hidden]down- [StatisticService]
+  }
+
+  package "Business.Validation" #DDCCFF {
+    [MarketException]
+  }
+
+  package "Business.Models" #F5F0FF {
+    [ReceiptDetailModel] -[hidden]down- [CustomerActivityModel]
+    [CustomerActivityModel] -[hidden]down- [FilterSearchModel]
+    [FilterSearchModel] -[hidden]down- [CategoryModel]
+    [CategoryModel] -[hidden]down- [ReceiptModel]
+    [ReceiptModel] -[hidden]down- [ProductModel]
+    [ProductModel] -[hidden]down- [CustomerModel]
+  }
+
+  [AutomapperProfile]
+}
+
+package "Data" as Data #F0F8F0 {
+  [TradeMarketDbContext]
+  [UnitOfWork]
+
+  package "Data.Interfaces" #E8F8E8 {
+    [IUnitOfWork] <<interface>>
+    [ICustomerRepository] <<interface>>
+    [IProductRepository] <<interface>>
+    [IReceiptRepository] <<interface>>
+    [ICategoryRepository] <<interface>>
+    [IReceiptDetailRepository] <<interface>>
+
+[UnitOfWork] --> [ICustomerRepository] : provides
+[UnitOfWork] --> [IProductRepository] : provides
+[UnitOfWork] --> [IReceiptRepository] : provides
+[UnitOfWork] --> [ICategoryRepository] : provides
+[UnitOfWork] --> [IReceiptDetailRepository] : provides
+[ICustomerRepository] -[hidden]down- [IProductRepository]
+[IProductRepository] -[hidden]down- [IReceiptRepository]
+[IReceiptRepository] -[hidden]down- [ICategoryRepository]
+[IReceiptDetailRepository] -[hidden]down- [IReceiptRepository]
+  }
+
+  package "Data.Repositories" #E0F0E0 {
+    [CustomerRepository] -[hidden]down- [ProductRepository]
+    [ProductRepository] -[hidden]down- [ReceiptRepository]
+    [ReceiptRepository] -[hidden]down- [CategoryRepository]
+    [CategoryRepository] -[hidden]down- [ReceiptDetailRepository]
+  }
+
+  package "Data.Entities" #D8F0D8 {
+    [ReceiptDetail] -[hidden]down- [Receipt]
+    [Receipt] -[hidden]down- [ProductCategory]
+    [ProductCategory] -[hidden]down- [Product]
+    [Product] -[hidden]down- [Person]
+    [Person] -[hidden]down- [Customer]
+  }
+}
+
+WebApi -down-> Business   #43397e: depends on
+Business -right-> Data #43397e: uses
+
+[Program.cs] --> [ProductService] : DI register
+[Program.cs] --> [CustomerService] : DI register
+[Program.cs] --> [ReceiptService] : DI register
+[Program.cs] --> [StatisticService] : DI register
+[Program.cs] --> [UnitOfWork] : DI register
+
+[Program.cs] --> [CustomersController] : discovers
+[Program.cs] --> [ProductsController] : discovers
+[Program.cs] --> [ReceiptsController] : discovers
+[Program.cs] --> [StatisticsController] : discovers
+
+[CustomersController] ..> [ICustomerService] : uses
+[ProductsController] ..> [IProductService] : uses
+[ReceiptsController] ..> [IReceiptService] : uses
+[StatisticsController] ..> [IStatisticService] : uses
+
+[CustomerService] ..> [IUnitOfWork] : depends on
+[ProductService] ..> [IUnitOfWork] : depends on
+[ReceiptService] ..> [IUnitOfWork] : depends on
+[StatisticService] ..> [IUnitOfWork] : depends on
+
+[CustomerService] -|> [ICustomerService] : implements
+[ProductService] -|> [IProductService] : implements
+[ReceiptService] -|> [IReceiptService] : implements
+[StatisticService] -|> [IStatisticService] : implements
+
+[AutomapperProfile] ..> [CustomerModel] : maps to
+[AutomapperProfile] ..> [ProductModel] : maps to
+[AutomapperProfile] ..> [ReceiptModel] : maps to
+[AutomapperProfile] ..> [CategoryModel] : maps to
+
+[AutomapperProfile] ..> [Customer] : maps from
+[AutomapperProfile] ..> [Product] : maps from
+[AutomapperProfile] ..> [Receipt] : maps from
+[AutomapperProfile] ..> [ProductCategory] : maps from
+
+[CustomerModel] ..> [AutomapperProfile] : maps from
+[ProductModel] ..> [AutomapperProfile] : maps from
+[ReceiptModel] ..> [AutomapperProfile] : maps from
+[CategoryModel] ..> [AutomapperProfile] : maps from
+
+[Customer] ..> [AutomapperProfile] : maps to
+[Product] ..> [AutomapperProfile] : maps to
+[Receipt] ..> [AutomapperProfile] : maps to
+[ProductCategory] ..> [AutomapperProfile] : maps to
+
+[CustomerService] ..> [AutomapperProfile] : uses
+[ProductService] ..> [AutomapperProfile] : uses
+[ReceiptService] ..> [AutomapperProfile] : uses
+[StatisticService] ..> [AutomapperProfile] : uses
+
+[CustomerService] ..> [MarketException] : throws
+[ProductService] ..> [MarketException] : throws
+[ReceiptService] ..> [MarketException] : throws
+
+[ICustomerService] ..> [CustomerModel] : works with
+[IProductService] ..> [ProductModel] : works with
+[IProductService] ..> [CategoryModel] : works with
+[IProductService] ..> [FilterSearchModel] : works with
+[IReceiptService] ..> [ReceiptModel] : works with
+[IStatisticService] ..> [ProductModel] : works with
+[IStatisticService] ..> [CustomerActivityModel] : works with
+
+[UnitOfWork] ..> [TradeMarketDbContext] : manages
+
+[UnitOfWork] -|> [IUnitOfWork] : implements
+[CustomerRepository] -|> [ICustomerRepository] : implements
+[ProductRepository] -|> [IProductRepository] : implements
+[ReceiptRepository] -|> [IReceiptRepository] : implements
+[CategoryRepository] -|> [ICategoryRepository] : implements
+[ReceiptDetailRepository] -|> [IReceiptDetailRepository] : implements
+
+[CustomerRepository] ..> [Customer] : CRUD operations
+[ProductRepository] ..> [Product] : CRUD operations
+[ReceiptRepository] ..> [Receipt] : CRUD operations
+[CategoryRepository] ..> [ProductCategory] : CRUD operations
+[ReceiptDetailRepository] ..> [ReceiptDetail] : CRUD operations
+@enduml

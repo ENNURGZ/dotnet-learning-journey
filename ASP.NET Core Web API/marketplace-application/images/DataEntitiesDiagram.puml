@@ -1,0 +1,114 @@
+@startuml DataEntitiesDiagram
+!theme plain
+skinparam classAttributeIconSize 0
+skinparam classFontSize 10
+skinparam packageFontSize 12
+
+' Color scheme for better visualization
+skinparam class {
+    BackgroundColor<<abstract>> LightCyan
+    BackgroundColor<<entity>> #F0F8FF
+    BorderColor Black
+}
+
+' Hide stereotype labels but keep colors
+skinparam classStereotype {
+    FontColor transparent
+    BackgroundColor transparent
+}
+
+' Color scheme for notes
+skinparam note {
+    BackgroundColor #FFFEF0
+    BorderColor #8B8B8B
+    FontColor Black
+}
+
+package "Data.Entities" {
+
+    abstract class BaseEntity <<abstract>> {
+        + Id: int
+    }
+
+    class Person <<entity>> {
+        + Id: int
+        + Name: string
+        + Surname: string
+        + BirthDate: DateTime
+    }
+
+    class Customer <<entity>> {
+        + Id: int
+        + PersonId: int
+        + DiscountValue: int
+        --
+        Person: Person
+        Receipts: ICollection<Receipt>
+    }
+
+    class ProductCategory <<entity>> {
+        + Id: int
+        + CategoryName: string
+        --
+        Products: ICollection<Product>
+    }
+
+    class Product <<entity>> {
+        + Id: int
+        + ProductCategoryId: int
+        + ProductName: string
+        + Price: decimal
+        --
+        Category: ProductCategory
+        ReceiptDetails: ICollection<ReceiptDetail>
+    }
+
+    class Receipt <<entity>> {
+        + Id: int
+        + CustomerId: int
+        + OperationDate: DateTime
+        + IsCheckedOut: bool
+        --
+        Customer: Customer
+        ReceiptDetails: ICollection<ReceiptDetail>
+    }
+
+    class ReceiptDetail <<entity>> {
+        + Id: int
+        + ReceiptId: int
+        + ProductId: int
+        + UnitPrice: decimal
+        + DiscountUnitPrice: decimal
+        + Quantity: int
+        --
+        Receipt: Receipt
+        Product: Product
+    }
+}
+
+' Inheritance relationships
+BaseEntity <|-- Person
+BaseEntity <|-- Customer
+BaseEntity <|-- ProductCategory
+BaseEntity <|-- Product
+BaseEntity <|-- Receipt
+BaseEntity <|-- ReceiptDetail
+
+' Entity relationships (matching the original diagram exactly)
+Person ||--o| Customer : "has a"
+Customer ||--o{ Receipt : "creates"
+Receipt ||--o{ ReceiptDetail : "contains"
+Product ||--o{ ReceiptDetail : "included in"
+ProductCategory ||--o{ Product : "categorizes"
+
+' Add notes for clarity
+
+note right of Person : Personal data\n for customers
+note right of Customer : Customer with\n discount value
+note right of BaseEntity : Base class \nwith Id property
+note right of ProductCategory : Category for\n grouping products
+note right of Product : Product with\n price and category
+note right of Receipt : Purchase document
+note right of ReceiptDetail : Line item with\n quantity and prices
+
+@enduml

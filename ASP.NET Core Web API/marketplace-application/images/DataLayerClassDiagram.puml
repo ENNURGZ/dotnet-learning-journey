@@ -1,0 +1,584 @@
+@startuml DataLayerClassDiagram
+!theme plain
+!define COMPACT_LAYOUT
+!define VERTICAL_ARRANGEMENT
+
+' Ultra compact settings with forced vertical layout
+skinparam nodesep 15
+skinparam ranksep 20
+skinparam padding 5
+skinparam classAttributeIconSize 0
+skinparam classFontSize 10
+skinparam packageFontSize 10
+skinparam groupInheritance 1
+set namespaceSeparator none
+
+' Force vertical layout from the start
+!define VERTICAL_PACKAGES
+!define TOP_TO_BOTTOM_LAYOUT
+
+' Additional vertical layout enforcement
+skinparam package {
+    FontStyle bold
+    FontSize 9
+    Padding 8
+    BackgroundColor #F0F0F0
+    BorderColor #000000
+}
+
+' Force strict vertical arrangement
+!define STRICT_VERTICAL
+!define NO_HORIZONTAL_SPREAD
+
+' Disable automatic member sorting
+skinparam classAttributesOrder PRESERVE
+
+' Ultra compact class display
+skinparam class {
+    ArrowColor #444444
+    ArrowThickness 1
+    ClassBorderThickness 1
+    ClassFontSize 10
+    AttributeFontSize 9
+    MethodFontSize 9
+    HeaderFontSize 10
+    BackgroundColor #FFFFFF
+    BorderColor #000000
+    Padding 3
+}
+
+' Settings for generic types display
+skinparam class {
+    GenericDisplayName true
+    GenericFontStyle bold
+}
+
+' Color scheme for better visualization
+skinparam class {
+    BackgroundColor<<interface>> #E0FFFF
+    BackgroundColor<<generic>> #9df0ef
+    BackgroundColor<<repository>> #E6E6FA
+    BackgroundColor<<entity>> #F0F8FF
+    BackgroundColor<<context>> #FFE4E1
+    BackgroundColor<<unitofwork>> #F5F5DC
+    BackgroundColor<<base>> #FFFACD
+    BorderColor Black
+}
+
+skinparam component {
+    BackgroundColor<<interface>> #cef1f4
+    BorderColor Black
+}
+
+' Ultra compact package display
+skinparam package {
+    BackgroundColor #F8F8F8
+    BorderColor #CCCCCC
+    FontSize 8
+    Padding 2
+    FontStyle bold
+}
+
+' Hide stereotype labels but keep colors
+skinparam classStereotype {
+    FontColor transparent
+    BackgroundColor transparent
+}
+
+' Ultra compact notes
+skinparam note {
+    BackgroundColor #FFFFFF
+    BorderColor #BDC3CB
+    FontColor #263852
+    FontSize 6
+    Padding 5
+}
+
+package "Data Layer" {
+
+    package "Entities" {
+        abstract class BaseEntity <<base>> {
+            + int Id
+        }
+        note right of BaseEntity #FFFACD
+            <size:14><b>⚡ ABSTRACT BASE ⚡</b></size>
+
+            <b>Purpose:</b> Base class for all entities
+            <b>Provides:</b> Primary Key (Id)
+
+            <i>All domain entities inherit from this class</i>
+        end note
+
+        class Person <<entity>> {
+            + int Id
+            + string Name
+            + string Surname
+            + DateTime BirthDate
+        }
+
+        class Customer <<entity>> {
+            + int Id
+            + int PersonId
+            + Person Person
+            + int DiscountValue
+            + ICollection<Receipt> Receipts
+        }
+
+        class Receipt <<entity>> {
+            + int Id
+            + int CustomerId
+            + Customer Customer
+            + DateTime OperationDate
+            + bool IsCheckedOut
+            + ICollection<ReceiptDetail> ReceiptDetails
+        }
+
+        class ReceiptDetail <<entity>> {
+            + int Id
+            + int ReceiptId
+            + Receipt Receipt
+            + int ProductId
+            + Product Product
+            + decimal UnitPrice
+            + decimal DiscountUnitPrice
+            + int Quantity
+        }
+        note bottom of ReceiptDetail
+            <b>Composite Key:</b>
+            (ReceiptId, ProductId)
+
+            <i>Many-to-Many linking table</i>
+        end note
+
+        class Product <<entity>> {
+            + int Id
+            + int ProductCategoryId
+            + ProductCategory Category
+            + string ProductName
+            + decimal Price
+            + ICollection<ReceiptDetail> ReceiptDetails
+        }
+
+        class ProductCategory <<entity>> {
+            + int Id
+            + string CategoryName
+            + ICollection<Product> Products
+        }
+    }
+
+    package "Interfaces" {
+        interface "IRepository<TEntity>" as I_REPOSITORY <<generic>> {
+            + GetAllAsync() : Task<IEnumerable<TEntity>>
+            + GetByIdAsync(int id) : Task<TEntity?>
+            + AddAsync(TEntity entity) : Task
+            + Delete(TEntity entity) : void
+            + DeleteByIdAsync(int id) : Task
+            + Update(TEntity entity) : void
+        }
+        note left of I_REPOSITORY #FFFACD
+            <size:14><b>⚡ GENERIC INTERFACE ⚡</b></size>
+
+            <b>Type Parameter:</b> TEntity
+            <b>Constraint:</b> where TEntity : BaseEntity
+
+            <i>Base interface for all repositories</i>
+            <i>Provides standard CRUD operations</i>
+        end note
+
+        interface IPersonRepository <<interface>> {
+        }
+        note top of IPersonRepository
+            <b>Person Repository:</b>
+            Uses base CRUD operations only
+        end note
+
+        interface ICustomerRepository <<interface>> {
+            + GetAllWithDetailsAsync() : Task<IEnumerable<Customer>>
+            + GetByIdWithDetailsAsync(int id) : Task<Customer?>
+        }
+        note right of ICustomerRepository
+            <b>Customer Repository:</b>
+            Eager loads: Person, Receipts,
+            ReceiptDetails
+        end note
+
+        interface IProductRepository <<interface>> {
+            + GetAllWithDetailsAsync() : Task<IEnumerable<Product>>
+            + GetByIdWithDetailsAsync(int id) : Task<Product?>
+        }
+        note right of IProductRepository
+            <b>Product Repository:</b>
+            Eager loads: Category,
+            ReceiptDetails
+        end note
+
+        interface IReceiptRepository <<interface>> {
+            + GetAllWithDetailsAsync() : Task<IEnumerable<Receipt>>
+            + GetByIdWithDetailsAsync(int id) : Task<Receipt?>
+        }
+        note right of IReceiptRepository
+            <b>Receipt Repository:</b>
+            Eager loads: Customer, Person,
+            ReceiptDetails, Products
+        end note
+
+        interface ICategoryRepository <<interface>> {
+        }
+        note top of ICategoryRepository
+            <b>Category Repository:</b>
+            Uses base CRUD operations only
+        end note
+
+        interface IReceiptDetailRepository <<interface>> {
+            + GetAllWithDetailsAsync() : Task<IEnumerable<ReceiptDetail>>
+        }
+        note top of IReceiptDetailRepository
+            <b>ReceiptDetail Repository:</b>
+            Eager loads: Receipt, Product
+        end note
+
+        interface IUnitOfWork <<interface>> {
+            + ICustomerRepository CustomerRepository
+            + IPersonRepository PersonRepository
+            + IProductRepository ProductRepository
+            + ICategoryRepository CategoryRepository
+            + IReceiptRepository ReceiptRepository
+            + IReceiptDetailRepository ReceiptDetailRepository
+            + SaveAsync() : Task
+        }
+        note bottom of IUnitOfWork #FFE4E1
+            <size:14><b>🔄 UNIT OF WORK 🔄</b></size>
+
+            <b>Purpose:</b> Transaction coordinator
+            <b>Pattern:</b> Unit of Work
+
+            <i>Manages all repositories within</i>
+            <i>single transaction boundary</i>
+        end note
+    }
+
+    package "Repositories" {
+        class PersonRepository <<repository>> {
+            + AddAsync(Person entity) : Task
+            + DeleteByIdAsync(int id) : Task
+            + Delete(Person entity) : void
+            + GetAllAsync() : Task<IEnumerable<Person>>
+            + GetByIdAsync(int id) : Task<Person?>
+            + Update(Person entity) : void
+            __
+            - TradeMarketDbContext context
+            - DbSet<Person> dbSet
+        }
+
+        class CustomerRepository <<repository>> {
+            + AddAsync(Customer entity) : Task
+            + DeleteByIdAsync(int id) : Task
+            + Delete(Customer entity) : void
+            + GetAllAsync() : Task<IEnumerable<Customer>>
+            + GetByIdAsync(int id) : Task<Customer?>
+            + Update(Customer entity) : void
+            + GetAllWithDetailsAsync() : Task<IEnumerable<Customer>>
+            + GetByIdWithDetailsAsync(int id) : Task<Customer?>
+            __
+            - TradeMarketDbContext context
+            - DbSet<Customer> dbSet
+        }
+
+        class ProductRepository <<repository>> {
+            + AddAsync(Product entity) : Task
+            + DeleteByIdAsync(int id) : Task
+            + Delete(Product entity) : void
+            + GetAllAsync() : Task<IEnumerable<Product>>
+            + GetByIdAsync(int id) : Task<Product?>
+            + Update(Product entity) : void
+            + GetAllWithDetailsAsync() : Task<IEnumerable<Product>>
+            + GetByIdWithDetailsAsync(int id) : Task<Product?>
+            __
+            - TradeMarketDbContext context
+            - DbSet<Product> dbSet
+        }
+
+        class ReceiptRepository <<repository>> {
+            + AddAsync(Receipt entity) : Task
+            + DeleteByIdAsync(int id) : Task
+            + Delete(Receipt entity) : void
+            + GetAllAsync() : Task<IEnumerable<Receipt>>
+            + GetByIdAsync(int id) : Task<Receipt?>
+            + Update(Receipt entity) : void
+            + GetAllWithDetailsAsync() : Task<IEnumerable<Receipt>>
+            + GetByIdWithDetailsAsync(int id) : Task<Receipt?>
+            __
+            - TradeMarketDbContext context
+            - DbSet<Receipt> dbSet
+        }
+
+        class CategoryRepository <<repository>> {
+            + AddAsync(ProductCategory entity) : Task
+            + DeleteByIdAsync(int id) : Task
+            + Delete(ProductCategory entity) : void
+            + GetAllAsync() : Task<IEnumerable<ProductCategory>>
+            + GetByIdAsync(int id) : Task<ProductCategory?>
+            + Update(ProductCategory entity) : void
+            __
+            - TradeMarketDbContext context
+            - DbSet<ProductCategory> dbSet
+        }
+
+        class ReceiptDetailRepository <<repository>> {
+            + AddAsync(ReceiptDetail entity) : Task
+            + DeleteByIdAsync(int id) : Task
+            + Delete(ReceiptDetail entity) : void
+            + GetAllAsync() : Task<IEnumerable<ReceiptDetail>>
+            + GetByIdAsync(int id) : Task<ReceiptDetail?>
+            + Update(ReceiptDetail entity) : void
+            __
+            - TradeMarketDbContext context
+            - DbSet<ReceiptDetail> dbSet
+        }
+    }
+
+    package "Data Context" {
+        class TradeMarketDbContext <<context>> {
+            + DbSet<Person> Persons
+            + DbSet<Customer> Customers
+            + DbSet<Receipt> Receipts
+            + DbSet<ReceiptDetail> ReceiptsDetails
+            + DbSet<Product> Products
+            + DbSet<ProductCategory> ProductCategories
+            __
+            # OnModelCreating(ModelBuilder modelBuilder) : void
+        }
+        note right of TradeMarketDbContext #FFE4E1
+            <size:14><b>🗄️ DB CONTEXT 🗄️</b></size>
+
+            <b>Framework:</b> Entity Framework Core
+            <b>Purpose:</b> Database access layer
+
+            <i>Configures relationships</i>
+            <i>Manages DbSets</i>
+        end note
+
+        class UnitOfWork <<unitofwork>> {
+            - TradeMarketDbContext context
+            - bool disposed
+            - ICustomerRepository customerRepository
+            - IPersonRepository personRepository
+            - IProductRepository productRepository
+            - ICategoryRepository categoryRepository
+            - IReceiptRepository receiptRepository
+            - IReceiptDetailRepository receiptDetailRepository
+            __
+            + ICustomerRepository CustomerRepository
+            + IPersonRepository PersonRepository
+            + IProductRepository ProductRepository
+            + ICategoryRepository CategoryRepository
+            + IReceiptRepository ReceiptRepository
+            + IReceiptDetailRepository ReceiptDetailRepository
+            + SaveAsync() : Task
+            + Dispose() : void
+            - Dispose(bool disposing) : void
+        }
+        note bottom of UnitOfWork
+            <b>Design Pattern:</b> Lazy Loading
+
+            <i>Repositories are instantiated</i>
+            <i>only when first accessed</i>
+        end note
+    }
+}
+
+' Force vertical package arrangement immediately after package definitions
+"Entities" -[hidden]down-> "Interfaces"
+"Interfaces" -[hidden]down-> "Repositories"
+"Repositories" -[hidden]down-> "Data Context"
+
+' Simple vertical enforcement
+"Entities" -[hidden]down-> "Interfaces"
+"Interfaces" -[hidden]down-> "Repositories"
+"Repositories" -[hidden]down-> "Data Context"
+
+' Entity inheritance relationships
+BaseEntity <|-- Person
+BaseEntity <|-- Customer
+BaseEntity <|-- Receipt
+BaseEntity <|-- ReceiptDetail
+BaseEntity <|-- Product
+BaseEntity <|-- ProductCategory
+
+' Entity associations (Domain Model)
+Person ||--o| Customer : contains
+Customer ||--o{ Receipt : has many
+Receipt ||--o{ ReceiptDetail : contains
+Product ||--o{ ReceiptDetail : appears in
+ProductCategory ||--o{ Product : categorizes
+
+' Interface inheritance
+I_REPOSITORY <|-- IPersonRepository
+I_REPOSITORY <|-- ICustomerRepository
+I_REPOSITORY <|-- IProductRepository
+I_REPOSITORY <|-- IReceiptRepository
+I_REPOSITORY <|-- ICategoryRepository
+I_REPOSITORY <|-- IReceiptDetailRepository
+
+' Implementation relationships
+IPersonRepository <|.. PersonRepository
+ICustomerRepository <|.. CustomerRepository
+IProductRepository <|.. ProductRepository
+IReceiptRepository <|.. ReceiptRepository
+ICategoryRepository <|.. CategoryRepository
+IReceiptDetailRepository <|.. ReceiptDetailRepository
+IUnitOfWork <|.. UnitOfWork
+
+' Repository dependencies on Entities
+PersonRepository ..> Person : CRUD operations
+CustomerRepository ..> Customer : CRUD operations
+ProductRepository ..> Product : CRUD operations
+ReceiptRepository ..> Receipt : CRUD operations
+CategoryRepository ..> ProductCategory : CRUD operations
+ReceiptDetailRepository ..> ReceiptDetail : CRUD operations
+
+' Repository dependencies on DbContext
+PersonRepository ..> TradeMarketDbContext : uses
+CustomerRepository ..> TradeMarketDbContext : uses
+ProductRepository ..> TradeMarketDbContext : uses
+ReceiptRepository ..> TradeMarketDbContext : uses
+CategoryRepository ..> TradeMarketDbContext : uses
+ReceiptDetailRepository ..> TradeMarketDbContext : uses
+
+' DbContext manages entities
+TradeMarketDbContext ..> Person : manages
+TradeMarketDbContext ..> Customer : manages
+TradeMarketDbContext ..> Receipt : manages
+TradeMarketDbContext ..> ReceiptDetail : manages
+TradeMarketDbContext ..> Product : manages
+TradeMarketDbContext ..> ProductCategory : manages
+
+' UnitOfWork provides repositories
+UnitOfWork ..> ICustomerRepository : provides
+UnitOfWork ..> IPersonRepository : provides
+UnitOfWork ..> IProductRepository : provides
+UnitOfWork ..> IReceiptRepository : provides
+UnitOfWork ..> ICategoryRepository : provides
+UnitOfWork ..> IReceiptDetailRepository : provides
+UnitOfWork ..> TradeMarketDbContext : manages
+
+' Force strict vertical arrangement
+!define VERTICAL_LAYOUT
+!define TOP_TO_BOTTOM
+
+' Vertical package arrangement with explicit positioning
+"Entities" -[hidden]down-> "Interfaces"
+"Interfaces" -[hidden]down-> "Repositories"
+"Repositories" -[hidden]down-> "Data Context"
+
+' Additional vertical enforcement
+"Entities" -[hidden]down-> "Interfaces"
+"Interfaces" -[hidden]down-> "Repositories"
+"Repositories" -[hidden]down-> "Data Context"
+
+' Ultra compact entity layout
+BaseEntity -[hidden]down-> Person
+Person -[hidden]down-> Customer
+Customer -[hidden]down-> Receipt
+Receipt -[hidden]down-> ReceiptDetail
+Product -[hidden]down-> ProductCategory
+
+' Ultra compact interface layout
+I_REPOSITORY -[hidden]down-> IPersonRepository
+IPersonRepository -[hidden]down-> ICustomerRepository
+ICustomerRepository -[hidden]down-> IProductRepository
+IProductRepository -[hidden]down-> IReceiptRepository
+IReceiptRepository -[hidden]down-> ICategoryRepository
+ICategoryRepository -[hidden]down-> IReceiptDetailRepository
+IReceiptDetailRepository -[hidden]down-> IUnitOfWork
+
+' Ultra compact repository layout
+PersonRepository -[hidden]down-> CustomerRepository
+CustomerRepository -[hidden]down-> ProductRepository
+ProductRepository -[hidden]down-> ReceiptRepository
+ReceiptRepository -[hidden]down-> CategoryRepository
+CategoryRepository -[hidden]down-> ReceiptDetailRepository
+
+' Ultra compact data context layout
+TradeMarketDbContext -[hidden]down-> UnitOfWork
+
+' Ultra compact final settings
+skinparam linetype ortho
+skinparam activity {
+    ArrowColor #444444
+    ArrowThickness 1
+}
+skinparam sequence {
+    ArrowColor #444444
+    ArrowThickness 1
+}
+
+' Ultra compact relationship display
+skinparam relation {
+    ArrowColor #444444
+    ArrowThickness 1
+    FontSize 6
+}
+
+' Force compact layout
+!define COMPACT_MODE
+!define MINIMAL_SPACING
+
+' Clean final settings
+skinparam class {
+    Padding 5
+    BackgroundColor #FFFFFF
+    BorderColor #000000
+}
+
+skinparam package {
+    Padding 8
+    BackgroundColor #F0F0F0
+    BorderColor #000000
+}
+
+' Additional vertical layout enforcement
+skinparam package {
+    FontStyle bold
+    FontSize 9
+    Padding 3
+}
+
+' Force vertical spacing
+skinparam nodesep 20
+skinparam ranksep 25
+
+' Additional vertical layout settings
+skinparam package {
+    FontStyle bold
+    FontSize 9
+    Padding 3
+    BackgroundColor #F0F0F0
+    BorderColor #000000
+}
+
+' Force strict vertical arrangement
+!define STRICT_VERTICAL
+!define NO_HORIZONTAL_SPREAD
+
+' Multiple vertical enforcement layers
+"Entities" -[hidden]down-> "Interfaces"
+"Interfaces" -[hidden]down-> "Repositories"
+"Repositories" -[hidden]down-> "Data Context"
+
+' Triple vertical enforcement
+"Entities" -[hidden]down-> "Interfaces"
+"Interfaces" -[hidden]down-> "Repositories"
+"Repositories" -[hidden]down-> "Data Context"
+
+' Cross-package vertical positioning
+BaseEntity -[hidden]down-> I_REPOSITORY
+I_REPOSITORY -[hidden]down-> PersonRepository
+PersonRepository -[hidden]down-> TradeMarketDbContext
+
+' Additional cross-package positioning
+Person -[hidden]down-> IPersonRepository
+IPersonRepository -[hidden]down-> PersonRepository
+PersonRepository -[hidden]down-> UnitOfWork
+
+@enduml

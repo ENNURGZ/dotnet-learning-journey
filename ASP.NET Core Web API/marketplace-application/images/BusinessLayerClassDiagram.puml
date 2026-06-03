@@ -1,0 +1,270 @@
+@startuml
+!theme plain
+skinparam classAttributeIconSize 0
+skinparam classFontSize 10
+skinparam packageFontSize 12
+skinparam nodesep 30
+skinparam ranksep 30
+skinparam padding 5
+skinparam groupInheritance 2
+set namespaceSeparator none
+skinparam classAttributeIconSize 0
+skinparam classFontSize 10
+
+' Settings for generic types display
+skinparam class {
+    GenericDisplayName true
+    GenericFontStyle bold
+}
+
+' Color scheme for better visualization
+skinparam class {
+    BackgroundColor<<interface>> #E0FFFF
+    BackgroundColor<<generic>> #9df0ef
+    BackgroundColor<<service>> #E6E6FA
+    BackgroundColor<<model>> #F0F8FF
+    BackgroundColor<<validation>> #FFE4E1
+    BackgroundColor<<mapper>> #F5F5DC
+    BorderColor Black
+}
+
+skinparam component {
+    BackgroundColor<<interface>> #cef1f4
+    BorderColor Black
+}
+
+' Hide stereotype labels but keep colors
+skinparam classStereotype {
+    FontColor transparent
+    BackgroundColor transparent
+}
+
+' Color scheme for notes
+skinparam note {
+    BackgroundColor #FFFFFF
+    BorderColor #BDC3CB
+    FontColor #263852
+}
+
+package "Business Layer" {
+
+    package "Interfaces" {
+        interface "IModelService<TModel>" as I_MODEL_SERVICE <<generic>> {
+            + GetAllAsync() : Task<IEnumerable<TModel>>
+            + GetByIdAsync(int id) : Task<TModel>
+            + AddAsync(TModel model) : Task<TModel>
+            + UpdateAsync(TModel model) : Task
+            + DeleteAsync(int modelId) : Task
+            __
+        }
+        note left of I_MODEL_SERVICE #FFFACD
+            <size:14><b>⚡ GENERIC INTERFACE ⚡</b></size>
+
+            <b>Type Parameter:</b> TModel
+            <b>Constraint:</b> where TModel : class
+
+            <i>Base interface for all model services</i>
+        end note
+
+        interface ICustomerService <<interface>> {
+            + GetCustomersByProductIdAsync(int productId) : Task<IEnumerable<CustomerModel>>
+            __
+        }
+
+        interface IProductService <<interface>> {
+            + GetByFilterAsync(FilterSearchModel filterSearch) : Task<IEnumerable<ProductModel>>
+            + GetAllProductCategoriesAsync() : Task<IEnumerable<CategoryModel>>
+            + AddCategoryAsync(CategoryModel categoryModel) : Task
+            + UpdateCategoryAsync(CategoryModel categoryModel) : Task
+            + RemoveCategoryAsync(int categoryId) : Task
+            __
+        }
+
+        interface IReceiptService <<interface>> {
+            + AddProductAsync(int productId, int receiptId, int quantity) : Task
+            + RemoveProductAsync(int productId, int receiptId, int quantity) : Task
+            + GetReceiptDetailsAsync(int receiptId) : Task<IEnumerable<ReceiptDetailModel>>
+            + ToPayAsync(int receiptId) : Task<decimal>
+            + CheckOutAsync(int receiptId) : Task
+            + GetReceiptsByPeriodAsync(DateTime startDate, DateTime endDate) : Task<IEnumerable<ReceiptModel>>
+            __
+        }
+
+        interface IStatisticService <<interface>> {
+            + GetMostPopularProductsAsync(int productCount) : Task<IEnumerable<ProductModel>>
+            + GetCustomersMostPopularProductsAsync(int productCount, int customerId) : Task<IEnumerable<ProductModel>>
+            + GetMostValuableCustomersAsync(int customerCount, DateTime startDate, DateTime endDate) : Task<IEnumerable<CustomerActivityModel>>
+            + GetIncomeOfCategoryInPeriod(int categoryId, DateTime startDate, DateTime endDate) : Task<decimal>
+            __
+        }
+    }
+
+    package "Models" {
+        class CustomerModel <<model>> {
+            + int Id
+            + string Name
+            + string Surname
+            + DateTime BirthDate
+            + int DiscountValue
+            + ICollection<int> ReceiptsIds
+        }
+
+        class ProductModel <<model>> {
+            + int Id
+            + int ProductCategoryId
+            + string ProductName
+            + decimal Price
+            + string CategoryName
+            + ICollection<int> ReceiptDetailIds
+        }
+
+        class ReceiptModel <<model>> {
+            + int Id
+            + int CustomerId
+            + DateTime OperationDate
+            + bool IsCheckedOut
+            + ICollection<int> ReceiptDetailsIds
+        }
+
+        class ReceiptDetailModel <<model>> {
+            + int Id
+            + int ReceiptId
+            + int ProductId
+            + decimal UnitPrice
+            + decimal DiscountUnitPrice
+            + int Quantity
+        }
+
+        class CategoryModel <<model>> {
+            + int Id
+            + string Name
+            + ICollection<int> ProductIds
+        }
+
+        class CustomerActivityModel <<model>> {
+            + int CustomerId
+            + string CustomerName
+            + decimal ReceiptSum
+        }
+
+        class FilterSearchModel <<model>> {
+            + int? CategoryId
+            + int? MinPrice
+            + int? MaxPrice
+        }
+    }
+
+    package "Services" {
+        class CustomerService <<service>> {
+            + AddAsync(CustomerModel model) : Task<CustomerModel>
+            + DeleteAsync(int modelId) : Task
+            + GetAllAsync() : Task<IEnumerable<CustomerModel>>
+            + GetByIdAsync(int id) : Task<CustomerModel>
+            + GetCustomersByProductIdAsync(int productId) : Task<IEnumerable<CustomerModel>>
+            + UpdateAsync(CustomerModel model) : Task
+            __
+            - IUnitOfWork unitOfWork
+            - IMapper mapper
+        }
+
+        class ProductService <<service>> {
+            + AddAsync(ProductModel model) : Task<ProductModel>
+            + AddCategoryAsync(CategoryModel categoryModel) : Task
+            + DeleteAsync(int modelId) : Task
+            + GetAllAsync() : Task<IEnumerable<ProductModel>>
+            + GetAllProductCategoriesAsync() : Task<IEnumerable<CategoryModel>>
+            + GetByFilterAsync(FilterSearchModel filterSearch) : Task<IEnumerable<ProductModel>>
+            + GetByIdAsync(int id) : Task<ProductModel>
+            + RemoveCategoryAsync(int categoryId) : Task
+            + UpdateAsync(ProductModel model) : Task
+            + UpdateCategoryAsync(CategoryModel categoryModel) : Task
+            __
+            - IUnitOfWork unitOfWork
+            - IMapper mapper
+        }
+
+        class ReceiptService <<service>> {
+            + AddAsync(ReceiptModel model) : Task<ReceiptModel>
+            + AddProductAsync(int productId, int receiptId, int quantity) : Task
+            + CheckOutAsync(int receiptId) : Task
+            + DeleteAsync(int modelId) : Task
+            + GetAllAsync() : Task<IEnumerable<ReceiptModel>>
+            + GetByIdAsync(int id) : Task<ReceiptModel>
+            + GetReceiptDetailsAsync(int receiptId) : Task<IEnumerable<ReceiptDetailModel>>
+            + GetReceiptsByPeriodAsync(DateTime startDate, DateTime endDate) : Task<IEnumerable<ReceiptModel>>
+            + RemoveProductAsync(int productId, int receiptId, int quantity) : Task
+            + ToPayAsync(int receiptId) : Task<decimal>
+            + UpdateAsync(ReceiptModel model) : Task
+            __
+            - IUnitOfWork unitOfWork
+            - IMapper mapper
+        }
+
+        class StatisticService <<service>> {
+            + GetCustomersMostPopularProductsAsync(int productCount, int customerId) : Task<IEnumerable<ProductModel>>
+            + GetIncomeOfCategoryInPeriod(int categoryId, DateTime startDate, DateTime endDate) : Task<decimal>
+            + GetMostPopularProductsAsync(int productCount) : Task<IEnumerable<ProductModel>>
+            + GetMostValuableCustomersAsync(int customerCount, DateTime startDate, DateTime endDate) : Task<IEnumerable<CustomerActivityModel>>
+            __
+            - IUnitOfWork unitOfWork
+            - IMapper mapper
+        }
+    }
+
+    package "Validation" {
+        class MarketException <<validation>> {
+            + MarketException()
+            + MarketException(string message)
+            + MarketException(string message, Exception innerException)
+            __
+        }
+    }
+
+    package "AutoMapper" {
+        class AutomapperProfile <<mapper>> {
+            + AutomapperProfile()
+        }
+    }
+}
+
+' Inheritance relationships
+I_MODEL_SERVICE <|-- ICustomerService
+I_MODEL_SERVICE <|-- IProductService
+I_MODEL_SERVICE <|-- IReceiptService
+
+' Implementation relationships
+ICustomerService <|.. CustomerService
+IProductService <|.. ProductService
+IReceiptService <|.. ReceiptService
+IStatisticService <|.. StatisticService
+
+' Dependencies
+CustomerService ..> CustomerModel : uses
+CustomerService ..> MarketException : uses
+ProductService ..> ProductModel : uses
+ProductService ..> CategoryModel : uses
+ProductService ..> FilterSearchModel : uses
+ProductService ..> MarketException : uses
+ReceiptService ..> ReceiptModel : uses
+ReceiptService ..> ReceiptDetailModel : uses
+ReceiptService ..> MarketException : uses
+StatisticService ..> ProductModel : uses
+StatisticService ..> CustomerActivityModel : uses
+
+' AutoMapper dependencies
+AutomapperProfile ..> CustomerModel : maps
+AutomapperProfile ..> ProductModel : maps
+AutomapperProfile ..> ReceiptModel : maps
+AutomapperProfile ..> ReceiptDetailModel : maps
+AutomapperProfile ..> CategoryModel : maps
+
+' Exception hierarchy
+Exception <|-- MarketException
+
+' Layout directives for compact vertical arrangement
+Interfaces -[hidden]down-> Models
+Models -[hidden]down-> Services
+Services -[hidden]down-> Validation
+Validation -[hidden]down-> AutoMapper
+
+@enduml

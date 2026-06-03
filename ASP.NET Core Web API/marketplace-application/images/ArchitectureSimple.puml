@@ -1,0 +1,41 @@
+@startuml
+!theme plain
+
+!define REFERRER_COLOR #0d1e89
+!define DI_COLOR #049086
+
+skinparam arrow {
+  Color<<referrer>> REFERRER_COLOR
+  Color<<di>> DI_COLOR
+}
+
+package "WebApi" as WebApi #c1d3ef {
+  [Program.cs] <<entrypoint>>
+  [Controllers]
+}
+
+package "Business" as Business #d0c8ee {
+  [Services]
+  [Models]
+  
+  [Services] --> [Models] : processes
+}
+
+package "Data" as Data #c4f5c4 {
+  [UnitOfWork]
+  [Repositories]
+  [Entities]
+  
+  [UnitOfWork] --> [Repositories] : provides
+  [Repositories] ..> [Entities] : manages
+}
+
+WebApi -right-> Business <<referrer>> : depends on
+Business -right-> Data <<referrer>> : uses
+
+[Program.cs] --> [Services] <<di>> : registers
+[Program.cs] --> [Controllers] : discovers
+[Controllers] --> [Services] <<di>> : uses
+[Services] --> [UnitOfWork] <<di>> : uses
+
+@enduml

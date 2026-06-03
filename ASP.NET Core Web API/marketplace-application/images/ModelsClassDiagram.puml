@@ -1,0 +1,94 @@
+@startuml Models Class Diagram
+
+!theme plain
+skinparam classAttributeIconSize 0
+skinparam classFontSize 10
+skinparam packageFontSize 12
+
+' Color scheme for better visualization
+skinparam class {
+    BackgroundColor<<model>> #F0F8FF
+    BorderColor Black
+}
+
+' Hide stereotype labels but keep colors
+skinparam classStereotype {
+    FontColor transparent
+    BackgroundColor transparent
+}
+
+' Color scheme for notes
+skinparam note {
+    BackgroundColor #FFFEF0
+    BorderColor #8B8B8B
+    FontColor Black
+}
+
+package "Business.Models" {
+    
+    class CustomerModel <<model>> {
+        + Id: int
+        + Name: string
+        + Surname: string
+        + BirthDate: DateTime
+        + DiscountValue: int
+        + ReceiptsIds: ICollection<int>
+    }
+    
+    class ReceiptModel <<model>> {
+        + Id: int
+        + CustomerId: int
+        + OperationDate: DateTime
+        + IsCheckedOut: bool
+        + ReceiptDetailsIds: ICollection<int>
+    }
+    
+    class ReceiptDetailModel <<model>> {
+        + Id: int
+        + ReceiptId: int
+        + ProductId: int
+        + UnitPrice: decimal
+        + DiscountUnitPrice: decimal
+        + Quantity: int
+    }
+    
+    class ProductModel <<model>> {
+        + Id: int
+        + ProductCategoryId: int
+        + ProductName: string
+        + Price: decimal
+        + CategoryName: string
+        + ReceiptDetailIds: ICollection<int>
+    }
+    
+    class CategoryModel <<model>> {
+        + Id: int
+        + Name: string
+        + ProductIds: ICollection<int>
+    }
+    
+    class CustomerActivityModel <<model>> {
+        + CustomerId: int
+        + CustomerName: string
+        + ReceiptSum: decimal
+    }
+    
+    class FilterSearchModel <<model>> {
+        + CategoryId: int?
+        + MinPrice: int?
+        + MaxPrice: int?
+    }
+}
+
+' Relationships between models (based on foreign key references)
+ReceiptModel ..> CustomerModel : "references (CustomerId)"
+ReceiptModel ..> ReceiptDetailModel : "contains (ReceiptDetailsIds)"
+ReceiptDetailModel ..> ProductModel : "references (ProductId)"
+ProductModel ..> CategoryModel : "references (ProductCategoryId)"
+
+' Additional relationships
+CustomerActivityModel ..> CustomerModel : "aggregates data from"
+FilterSearchModel ..> ProductModel : "filters"
+FilterSearchModel ..> CategoryModel : "filters by"
+
+@enduml
